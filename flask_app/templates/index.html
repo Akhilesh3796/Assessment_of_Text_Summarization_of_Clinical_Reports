@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Text Assessment of Medical Records</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/foundation-sites@6.5.1/dist/css/foundation.min.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        /* Add styles for the table */
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            margin-top: 20px;
+        }
+
+        th, td {
+            padding: 8px;
+            text-align: center;
+            border: 1px solid #ddd;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+
+        /* Global Styles */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f5f5f5;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background-color: #dcdcdc;
+            text-align: left;
+        }
+
+        /* Container Styles */
+        .container {
+            background-color: rgba(72, 72, 72, 0.987);
+            border-radius: 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            width: 80%;
+            max-width: 800px;
+            text-align: center;
+        }
+
+        /* Heading Styles */
+        h1 {
+            color: #f9efef;
+            margin-bottom: 20px;
+            font-size: 24px;
+        }
+
+        /* Form Styles */
+        form {
+            margin-bottom: 20px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        label {
+            font-weight: bold;
+            display: block;
+            margin-bottom: 8px;
+            color: whitesmoke;
+            align-items: flex-start;
+        }
+
+        select, input[type="text"], textarea {
+            width: 100%;
+            padding: 10px; /* Adjust padding for better alignment */
+            margin-bottom: 10px; /* Adjust margin for better spacing */
+            border: 1px solid #ccc;
+            border-radius: 10px;
+            font-size: 16px;
+        }
+       
+
+        button[type="submit"], button[type="reset"] {
+            width: 100%;
+            padding: 15px; /* Adjust padding for better alignment */
+            margin-bottom: 20px;
+            border: 1px solid #ccc;
+            border-radius: 20px;
+            font-size: 16px;
+            margin: 20px 0; /* Adjust margin for better spacing */
+        }
+
+        textarea {
+            resize: vertical;
+            border-radius: 20px ;
+
+        }
+
+        .button-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 10px; /* Add spacing between buttons and form elements */
+        }
+
+        .submit-button, .reset-button {
+            flex: 2; /* Distribute available space equally */
+            background-color: #444;
+            color: white;
+            cursor: pointer;
+            border: none;
+            transition: background-color 0.3s;
+        }
+
+        .submit-button:hover, .reset-button:hover {
+            background-color: #333;
+        }
+
+        /* Output Container Styles */
+        .output-container {
+            background-color: white;
+            padding: 15px;
+            border-radius: 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            border: 1px solid #ccc;
+        }
+
+        /* Output Text Styles */
+        .output-heading {
+            color: #333;
+            font-size: 18px;
+            margin-bottom: 10px;
+        }
+
+        .input-text {
+            border-radius: 20px;
+        }
+
+        .output-text {
+            line-height: 1.6;
+            color: #555;
+        }
+
+        .left-aligned-label {
+            text-align: left;
+        }
+
+        .output-heading {
+            text-align: left;
+        }
+
+        .output-text {
+            text-align: left;
+        }
+
+        .output-rouge {
+            text-align: left;
+        }
+        .drop-down{
+            border-radius: 10px;
+        }
+    </style>
+    <script>
+        window.addEventListener('DOMContentLoaded', (event) => {
+            const modelSelection = document.getElementById('model-selection');
+            modelSelection.value = localStorage.getItem('selectedModel') || 'gpt2';
+
+            const similarityModelSelection = document.getElementById('similarity-model');
+            similarityModelSelection.value = localStorage.getItem('selectedSimilarityModel') || 'biobert    ';
+
+            modelSelection.addEventListener('change', (event) => {
+                localStorage.setItem('selectedModel', event.target.value);
+            });
+
+            similarityModelSelection.addEventListener('change', (event) => {
+                localStorage.setItem('selectedSimilarityModel', event.target.value);
+            });
+
+            
+
+        });
+
+        function resetForm() {
+            const form = document.getElementById('summarization-form');
+            form.reset();
+        }
+    </script>
+</head>
+<body>
+    <div class="container">
+        <h1>Text Assessment of Medical Records</h1>
+        <form id="summarization-form" method="post">
+            <label class="left-aligned-label">Select a Model:</label>
+            <select class="drop-down" id="model-selection" name="model" class="mb-4">
+                
+                <option value="gpt2">GPT-2</option>
+                <option value="bart">BART</option>
+                <option value="T5">T5</option>
+                <option value="clinicalBert">ClinicalBert</option>
+            </select>
+            <label class="left-aligned-label">Select a Similarity Model:</label>
+            <select id="similarity-model"  class="drop-down" name="similarity_model" class="mb-4">
+                
+                <option value="biobert">Biobert</option>
+                <option value="clinicalbert">ClinicalBert</option>
+                <option value="zero-shot">Zero-shot</option>
+                <option value="roberta">Roberta</option>
+            </select>
+            <label class="left-aligned-label" >Statement:</label>
+            <input type="text" id="statement"   name="statement" placeholder="Enter a statement..." value="{{ statement }}" required class="mb-4">
+           
+            <label  class="left-aligned-label"> Primary Statement: </label>
+            <textarea id="text-input" name="text-input-primary" rows="10" placeholder="Enter your text..." required>{{ text_input_primary }}</textarea>
+
+            
+            <label class="left-aligned-label"> Secondary Statement: </label>
+            <textarea id="text-input-secondary" name="text-input-secondary" rows="10" placeholder="Enter your text..." required>{{ text_input_secondary }}</textarea>
+
+            <!-- <textarea id="text-input" name="text-input" rows="5" placeholder="Enter your text..." required class="mb-4"></textarea> -->
+            <div class="button-container">
+                <button type="submit" class="submit-button" onclick="return submitForm()">Generate Summary</button>
+                <button type="reset" class="reset-button" onclick="resetForm()">Reset</button>
+                
+            </div>
+        </form>
+        <div id="output" class="output-container">
+            {% if summary_output %}
+            <h3 class="output-heading">Generated Summary:</h3>
+            <p class="output-text">{{ summary_output | safe }}</p>
+            <h3 class="output-heading">Relationship Type: <b>{{ relationship_type }} </b></h3>
+            <h3 class="output-rouge">Summary ROUGE Scores:</h3>
+            <table>
+                <tr>
+                    <th class="metric-column">Metric</th>
+                    <th class="empty-column"></th>
+                    <th class="precision-column">Precision</th>
+                    <th class="empty-column"></th>
+                    <th class="recall-column">Recall</th>
+                    <th class="empty-column"></th>
+                    <th class="f1-column">F1</th>
+                </tr>
+                {% for rouge_metric, score in roughe_score.items() %}
+                <tr>
+                    <td>{{ rouge_metric }}</td>
+                    <td class="empty-column"></td>
+                    <td>{{ score.precision | round(2) }}</td>
+                    <td class="empty-column"></td>
+                    <td>{{ score.recall | round(2) }}</td>
+                    <td class="empty-column"></td>
+                    <td>{{ score.fmeasure | round(2) }}</td>
+                </tr>
+                {% endfor %}
+            </table>
+            {% endif %}
+        </div>
+    </div>
+</body>
+</html>
